@@ -56,6 +56,7 @@ def fuzz(urlList, wordlist, outputDir="."):
                 concurrent=concurrent,
                 headers=headers,
                 proxies=proxies,
+                scanmode=True,  # ignore connection errors
             ) as session:
                 for resultLine in session.fuzz():
 
