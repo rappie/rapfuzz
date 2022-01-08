@@ -26,7 +26,7 @@ def fuzz(urlList, wordlist, outputDir="."):
             .replace(":", "-")
             .split(".")[0]
         )
-        logFileName = f"rapfuzz.log.{scheme}_{netloc}{path}.{now}"
+        logFileName = f"rapfuzz.log.{scheme}_{netloc}{path}.{now}.txt"
 
         with open(logFileName, "w") as logFile:
 
