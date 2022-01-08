@@ -67,6 +67,9 @@ def fuzz(urlList, wordlist, outputDir="."):
 
                     counter += 1
 
+            print()
+            print()
+
             for code, resultList in resultData.items():
 
                 if len(resultList) >= RESULT_FILTER_CEILING:
