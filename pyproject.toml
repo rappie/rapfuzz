@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "rapfuzz"
+version = "0.1.0"
+description = ""
+authors = ["Rappie <jasper@rappie.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+wfuzz = "^3.1.0"
+
+[tool.poetry.dev-dependencies]
+black = "^21.12b0"
+pdbpp = "^0.10.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
