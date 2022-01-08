@@ -1,5 +1,6 @@
 wordlist.txt
 urls.txt
+rapfuzz.log.*
 
 
 # Byte-compiled / optimized / DLL files
