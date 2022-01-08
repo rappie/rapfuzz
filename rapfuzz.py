@@ -9,7 +9,7 @@ from collections import defaultdict
 import wfuzz
 
 
-RESULT_FILTER_CEILING = 3
+RESULT_FILTER_CEILING = 100
 
 
 def fuzz(urlList, wordlist, outputDir="."):
@@ -73,8 +73,15 @@ def parseArgs():
         with open(args.url_file, "r") as urlFile:
             urlList = [k.strip() for k in urlFile.readlines() if k.strip() != ""]
 
-    # Append '/FUZZ' if nessecary
-    urlList = list(map(lambda x: x if "FUZZ" in x else f"{x}/FUZZ", urlList))
+    # Append 'FUZZ' if nessecary
+    fixedUrlList = []
+    for url in urlList:
+        if "FUZZ" not in url:
+            if not url.endswith("/"):
+                url += "/"
+            url += "FUZZ"
+        fixedUrlList.append(url)
+    urlList = fixedUrlList
 
     if not os.path.exists(args.wordlist):
         raise Exception(f"Wordlist file path does not exist: {args.wordlist}")
