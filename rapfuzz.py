@@ -1,50 +1,29 @@
 import wfuzz
 import pdb
 from collections import defaultdict
-import pprint
-
-pp = pprint.PrettyPrinter(indent=2)
 
 
-"""
-        resultLine.description
-        resultLine.history.method
-        resultLine.code
-        resultLine.chars
-        resultLine.lines
-        resultLine.words
-        resultLine.md5
-        resultLine.history.raw_content
-"""
+RESULT_FILTER_CEILING = 3
 
-if __name__ == "__main__":
+
+def main():
+
+    print("-------")
     print("rapfuzz")
     print("-------")
     print()
 
-    RESULT_FILTER_CEILING = 3
-
     url = "http://testphp.vulnweb.com/FUZZ"
-    # hc = [400, 404]
+    sc = [200, 204, 301, 302, 307, 308, 401, 403, 405, 500]
     hc = []
     payloads = [("file", dict(fn="wordlist.txt"))]
 
     resultData = defaultdict(list)
 
     with wfuzz.FuzzSession(url=url, payloads=payloads) as session:
-        for resultLine in session.fuzz(hc=hc):
-
+        for resultLine in session.fuzz(sc=sc, hc=hc):
             resultData[resultLine.code].append(resultLine)
 
-            # print(resultLine)
-
-        # pdb.set_trace()
-        # pass
-
-    # print(len(resultData["200"]))
-    # pdb.set_trace()
-
-    # pp.pprint(resultData)
     for code, resultList in resultData.items():
 
         if len(resultList) >= RESULT_FILTER_CEILING:
@@ -55,3 +34,7 @@ if __name__ == "__main__":
                 print(resultLine)
 
         print()
+
+
+if __name__ == "__main__":
+    main()
