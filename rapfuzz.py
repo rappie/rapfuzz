@@ -1,17 +1,15 @@
-import wfuzz
+import sys
 import pdb
+import argparse
 from collections import defaultdict
+
+import wfuzz
 
 
 RESULT_FILTER_CEILING = 3
 
 
-def main():
-
-    print("-------")
-    print("rapfuzz")
-    print("-------")
-    print()
+def fuzz(args):
 
     url = "http://testphp.vulnweb.com/FUZZ"
     sc = [200, 204, 301, 302, 307, 308, 401, 403, 405, 500]
@@ -36,5 +34,32 @@ def main():
         print()
 
 
+def parseArgs():
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-u", "--url", help="Target URL")
+    group.add_argument("-U", "--url-file", help="Filename with url(s)")
+    parser.add_argument("-w", "--wordlist", help="Wordlist to use", required=True)
+    parser.add_argument("-o", "--output-file", help="Filename to write output to")
+    return parser.parse_args()
+
+
+def checkArgs(args):
+
+    print(args)
+
+    print("check ok")
+    return True
+
+
 if __name__ == "__main__":
-    main()
+
+    print("-------")
+    print("rapfuzz")
+    print("-------")
+    print()
+
+    args = parseArgs()
+    if not checkArgs(args):
+        sys.exit(1)
+    fuzz(args)
