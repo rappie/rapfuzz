@@ -34,15 +34,38 @@ def fuzz(urlList, wordlist, outputDir="."):
                 print(logString)
                 logFile.write(f"{logString}\n")
 
-            sc = [200, 204, 301, 302, 307, 308, 401, 403, 405, 500]
-            hc = []
+            codeList = [200, 204, 301, 302, 307, 308, 401, 403, 405, 500]
             payloads = [("file", dict(fn=wordlist))]
+            concurrent = 40
+            headers = [("X-Hackerone", "rappie")]
+            # proxies = [("localhost", 8080, "HTTP")]
+            proxies = []
+
+            log(f"Date: {now}")
+            log(f"URL: {url}")
+            log(f"Wordlist: {wordlist}")
+            log(f"Show codes: {codeList}")
+            log()
 
             resultData = defaultdict(list)
+            counter = 0
 
-            with wfuzz.FuzzSession(url=url, payloads=payloads) as session:
-                for resultLine in session.fuzz(sc=sc, hc=hc):
-                    resultData[resultLine.code].append(resultLine)
+            with wfuzz.FuzzSession(
+                url=url,
+                payloads=payloads,
+                concurrent=concurrent,
+                headers=headers,
+                proxies=proxies,
+            ) as session:
+                for resultLine in session.fuzz():
+
+                    if counter % 1000 == 0:
+                        print(".", end="", flush=True)
+
+                    if resultLine.code in codeList:
+                        resultData[resultLine.code].append(resultLine)
+
+                    counter += 1
 
             for code, resultList in resultData.items():
 
