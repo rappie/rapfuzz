@@ -1,3 +1,4 @@
+import os
 import sys
 import pdb
 import argparse
@@ -9,7 +10,7 @@ import wfuzz
 RESULT_FILTER_CEILING = 3
 
 
-def fuzz(args):
+def fuzz(urlList, wordlist, outputDir):
 
     url = "http://testphp.vulnweb.com/FUZZ"
     sc = [200, 204, 301, 302, 307, 308, 401, 403, 405, 500]
@@ -40,16 +41,32 @@ def parseArgs():
     group.add_argument("-u", "--url", help="Target URL")
     group.add_argument("-U", "--url-file", help="Filename with url(s)")
     parser.add_argument("-w", "--wordlist", help="Wordlist to use", required=True)
-    parser.add_argument("-o", "--output-file", help="Filename to write output to")
-    return parser.parse_args()
+    parser.add_argument("-o", "--output-dir", help="Directory to write output to")
+    args = parser.parse_args()
 
+    if args.url:
+        urlList = [args.url]
+    else:
+        if not os.path.exists(args.url_file):
+            raise Exception(f"URL file path does not exist: {args.url_file}")
+        with open(args.url_file, "r") as urlFile:
+            urlList = [k.strip() for k in urlFile.readlines() if k.strip() != ""]
 
-def checkArgs(args):
+    # Append '/FUZZ' if nessecary
+    urlList = list(map(lambda x: x if "FUZZ" in x else f"{x}/FUZZ", urlList))
 
-    print(args)
+    if not os.path.exists(args.wordlist):
+        raise Exception(f"Wordlist file path does not exist: {args.wordlist}")
 
-    print("check ok")
-    return True
+    wordlist = args.wordlist
+
+    if args.output_dir:
+        if not os.path.exists(args.output_dir):
+            raise Exception(f"Output directory does not exist: {args.output_dir}")
+
+    outputDir = args.output_dir
+
+    return urlList, wordlist, outputDir
 
 
 if __name__ == "__main__":
@@ -60,6 +77,4 @@ if __name__ == "__main__":
     print()
 
     args = parseArgs()
-    if not checkArgs(args):
-        sys.exit(1)
-    fuzz(args)
+    fuzz(*args)
