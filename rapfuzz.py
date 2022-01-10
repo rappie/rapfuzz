@@ -60,11 +60,16 @@ def fuzz(urlList, wordlist, outputDir="."):
             ) as session:
                 for resultLine in session.fuzz():
 
+                    code = resultLine.code
+
                     if counter % 1000 == 0:
                         print(".", end="", flush=True)
 
-                    if resultLine.code in codeList:
-                        resultData[resultLine.code].append(resultLine)
+                    if code in codeList:
+
+                        # Hacky memory optimization fix
+                        if not len(resultData[code]) >= RESULT_FILTER_CEILING:
+                            resultData[code].append(resultLine)
 
                     counter += 1
 
